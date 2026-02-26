@@ -8,18 +8,6 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 
-/// Supported image compression formats
-enum CompressFormat {
-  /// JPEG format
-  jpeg,
-
-  /// PNG format
-  png,
-
-  /// WebP format
-  webp,
-}
-
 class ImageCompressorResult {
   /// 压缩后文件
   final File file;
@@ -97,21 +85,19 @@ class ImageCompressorOptions {
     this.preferredMinQuality = 80,
     this.maxAttemptsPerDim = 5,
     this.maxTotalTrials = 24,
-  })  : assert(targetSizeInKB > 0),
-        assert(initialQuality <= 100 && initialQuality > 0),
-        assert(minQuality > 0 && minQuality <= initialQuality),
-        assert(step > 0),
-        assert(earlyStopRatio > 0 && earlyStopRatio <= 1.0),
-        assert(nearTargetFactor >= 1.0),
-        assert(preferredMinQuality > 0 && preferredMinQuality <= 100),
-        assert(maxAttemptsPerDim > 0),
-        assert(maxTotalTrials > 0);
+  }) : assert(targetSizeInKB > 0),
+       assert(initialQuality <= 100 && initialQuality > 0),
+       assert(minQuality > 0 && minQuality <= initialQuality),
+       assert(step > 0),
+       assert(earlyStopRatio > 0 && earlyStopRatio <= 1.0),
+       assert(nearTargetFactor >= 1.0),
+       assert(preferredMinQuality > 0 && preferredMinQuality <= 100),
+       assert(maxAttemptsPerDim > 0),
+       assert(maxTotalTrials > 0);
 }
 
 class _Semaphore {
-  _Semaphore(int permits)
-      : _maxPermits = permits,
-        _permits = permits;
+  _Semaphore(int permits) : _maxPermits = permits, _permits = permits;
 
   final int _maxPermits;
   int _permits;
