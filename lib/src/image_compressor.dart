@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
 
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 
@@ -507,27 +508,14 @@ class ImageCompressorService {
 
       while (low <= high && attempts < maxAttempts) {
         final int mid = (low + high) >> 1;
-        // Use Dart image library for compression
-        final File sourceFile = File(sourcePath);
-        final Uint8List sourceBytes = await sourceFile.readAsBytes();
-        final img.Image? image = img.decodeImage(sourceBytes);
-        if (image == null) return null;
-
-        late Uint8List bytes;
-        switch (format) {
-          case CompressFormat.jpeg:
-            bytes = img.encodeJpg(image, quality: mid);
-            break;
-          case CompressFormat.png:
-            bytes = img.encodePng(image);
-            break;
-          case CompressFormat.webp:
-            // Fallback to JPEG for WebP since image package may not support WebP encoding
-            bytes = img.encodeJpg(image, quality: mid);
-            break;
-        }
+        final Uint8List? bytes = await FlutterImageCompress.compressWithFile(
+          sourcePath,
+          quality: mid,
+          format: format,
+          keepExif: keepExif,
+        );
         attempts++;
-        // bytes is guaranteed to be set by the switch statement above
+        if (bytes == null) break;
         final int size = bytes.lengthInBytes;
         if (size <= targetBytes) {
           if (bestSize == null || size > bestSize) {
